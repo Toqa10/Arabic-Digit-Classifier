@@ -141,4 +141,3 @@ arabic-digit-classifier/
 
 ---
 
-*Built with ❤️ as Phase 1 of AI/ML Learning Roadmap*
