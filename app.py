@@ -159,13 +159,11 @@ class ArabicMLP(nn.Module):
 
 @st.cache_resource
 def load_model():
-    # __file__ = arabic_digits/app/app.py
-    # بنرجع خطوة للـ parent → arabic_digits/
+    # best.pth موجودة جنب app.py في نفس الـ folder
     app_dir    = os.path.dirname(os.path.abspath(__file__))
-    parent_dir = os.path.dirname(app_dir)
-    model_path = os.path.join(parent_dir, 'models', 'best.pth')
+    model_path = os.path.join(app_dir, 'best.pth')
     model = ArabicMLP()
-    ckpt  = torch.load(model_path, map_location='cpu')
+    ckpt  = torch.load(model_path, map_location='cpu', weights_only=False)
     model.load_state_dict(ckpt['state'])
     model.eval()
     return model, ckpt
@@ -187,8 +185,9 @@ def predict(model, tensor):
 try:
     model, ckpt = load_model()
     model_ok = True
-except:
+except Exception as e:
     model_ok = False
+    model_error = str(e)
 
 # ══════════════════════════════════════════════════════════
 # HEADER
@@ -310,7 +309,7 @@ with col_result:
             """, unsafe_allow_html=True)
 
     elif not model_ok:
-        st.error("Model not found — run `train.py` first to generate `models/best.pth`")
+        st.error(f"Model error: {model_error}")
     else:
         st.markdown("""
         <div style="height:240px;display:flex;flex-direction:column;
