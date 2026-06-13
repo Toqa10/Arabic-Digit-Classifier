@@ -9,6 +9,7 @@ import torch.nn as nn
 import numpy as np
 from PIL import Image, ImageOps
 import pandas as pd
+import os
 
 # ── Config ─────────────────────────────────────────────────
 ARABIC    = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩']
@@ -158,8 +159,13 @@ class ArabicMLP(nn.Module):
 
 @st.cache_resource
 def load_model():
+    # __file__ = arabic_digits/app/app.py
+    # بنرجع خطوة للـ parent → arabic_digits/
+    app_dir    = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(app_dir)
+    model_path = os.path.join(parent_dir, 'models', 'best.pth')
     model = ArabicMLP()
-    ckpt  = torch.load('../models/best.pth', map_location='cpu')
+    ckpt  = torch.load(model_path, map_location='cpu')
     model.load_state_dict(ckpt['state'])
     model.eval()
     return model, ckpt
